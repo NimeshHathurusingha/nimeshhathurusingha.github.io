@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Beauty Fund</title>
+    <!-- Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(-45deg, #f3e6e8, #f5d7db, #e8c9c1, #f4e1d2);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .voucher-card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px 30px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 320px;
+            width: 90%;
+            border: 1px solid #ebd3d5;
+            animation: popIn 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        h1 {
+            color: #5c4346;
+            margin-bottom: 5px;
+            font-size: 1.8rem;
+            font-family: 'Georgia', serif;
+        }
+
+        .subtitle {
+            color: #8c7376;
+            font-size: 0.95rem;
+            margin-bottom: 25px;
+        }
+
+        .balance-container {
+            background: #fffafa;
+            border: 2px dashed #d1a3a8;
+            border-radius: 15px;
+            padding: 25px 20px;
+            margin-bottom: 25px;
+        }
+
+        .balance-label {
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            color: #a38588;
+            font-weight: bold;
+        }
+
+        .balance-amount {
+            font-size: 3rem;
+            color: #b56a73;
+            font-weight: bold;
+            margin: 15px 0;
+            font-family: 'Georgia', serif;
+        }
+
+        .footer-note {
+            font-size: 0.85rem;
+            color: #8c7376;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="voucher-card">
+        <h1>Happy 30th! ✨</h1>
+        <p class="subtitle">Your Personal Beauty & Self-Care Fund</p>
+        
+        <div class="balance-container">
+            <div class="balance-label">Current Balance</div>
+            <!-- YOU ONLY NEED TO CHANGE THE NUMBER BELOW -->
+            <div class="balance-amount">Rs. 15,000</div>
+        </div>
+        
+        <p class="footer-note">Treat yourself to whatever makes you feel amazing. You deserve it!</p>
+    </div>
+
+    <script>
+        // Trigger confetti when the page loads
+        window.onload = function() {
+            var duration = 3000;
+            var end = Date.now() + duration;
+
+            (function frame() {
+                confetti({
+                    particleCount: 5,
+                    angle: 60,
+                    spread: 55,
+                    origin: { x: 0 },
+                    colors: ['#b56a73', '#f5d7db', '#ffd700']
+                });
+                confetti({
+                    particleCount: 5,
+                    angle: 120,
+                    spread: 55,
+                    origin: { x: 1 },
+                    colors: ['#b56a73', '#f5d7db', '#ffd700']
+                });
+
+                if (Date.now() < end) {
+                    requestAnimationFrame(frame);
+                }
+            }());
+        };
+    </script>
+</body>
+</html>
