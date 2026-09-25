@@ -101,6 +101,23 @@
             100% { opacity: 0.4; }
         }
 
+        .greeting-text {
+            font-size: 2rem;
+            color: #fff;
+            margin-bottom: 40px;
+            text-align: center;
+            font-weight: 800;
+            text-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            animation: fadeInDown 1s ease;
+            padding: 0 20px;
+            line-height: 1.2;
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         /* Voucher Card */
         .voucher-card {
             background: rgba(255, 255, 255, 0.4);
@@ -220,6 +237,7 @@
 
     <!-- Start Screen: Gift Box -->
     <div id="gift-screen">
+        <div class="greeting-text">Hi Dilini,<br>your gift is ready ✨</div>
         <div class="gift-box" id="gift-box" onclick="openGift()">🎁</div>
         <div class="tap-text">Tap to Open</div>
     </div>
