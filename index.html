@@ -365,7 +365,7 @@
     <div id="gift-screen">
         <div class="greeting-text">Hi Dilini,<br>your gift is ready ✨</div>
         <div class="gift-box" id="gift-box" onclick="openGift()">🎁</div>
-        <div class="tap-text">Tap to Open</div>
+        <div class="tap-text" id="tap-text">Loading gift...</div>
     </div>
 
     <!-- Main Screen: Voucher -->
@@ -404,12 +404,31 @@
         </div>
     </div>
     <script>
-        // CHANGE THIS TO YOUR DESIRED VOUCHER AMOUNT
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxyYnGp1djWRzSL4VV7SXH-Rom2CCa9xs2N_NuMogokI76mfMVD-36lxo7gpKUuR2eZAA/exec';
         let currentBalance = 15000; 
         let isOpened = false;
+        let isReady = false;
+
+        // Fetch balance on load
+        window.onload = () => {
+            fetch(SCRIPT_URL)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.balance !== undefined) {
+                        currentBalance = data.balance;
+                    }
+                    isReady = true;
+                    document.getElementById('tap-text').innerText = "Tap to Open";
+                })
+                .catch(err => {
+                    console.error('Error fetching balance:', err);
+                    isReady = true;
+                    document.getElementById('tap-text').innerText = "Tap to Open";
+                });
+        };
         
         function openGift() {
-            if (isOpened) return;
+            if (isOpened || !isReady) return;
             isOpened = true;
 
             // Hide gift screen & change background
@@ -510,10 +529,11 @@
             document.getElementById('claim-modal').classList.remove('show');
         }
 
-        function confirmClaim() {
+        async function confirmClaim() {
             const input = document.getElementById('claim-amount').value;
             const amountToClaim = parseInt(input);
             const errorMsg = document.getElementById('modal-error');
+            const confirmBtn = document.querySelector('.confirm-btn');
 
             if (isNaN(amountToClaim) || amountToClaim <= 0) {
                 errorMsg.innerText = 'Please enter a valid amount';
@@ -527,31 +547,59 @@
                 return;
             }
 
-            // Valid amount
-            closeModal();
+            // Disable button and show loading
+            confirmBtn.innerText = 'Processing...';
+            confirmBtn.disabled = true;
+            errorMsg.style.opacity = '0';
 
-            // Fireworks for claiming
-            confetti({
-                particleCount: 150,
-                spread: 100,
-                origin: { y: 0.6 },
-                colors: ['#ff4757', '#ffffff', '#ff6b81', '#ff9a9e']
-            });
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ amount: amountToClaim })
+                });
 
-            // Animate decrement
-            const oldBalance = currentBalance;
-            currentBalance -= amountToClaim;
-            
-            animateValue("counter", oldBalance, currentBalance, 1500, false);
+                const data = await response.json();
+                
+                if (data.error) {
+                    throw new Error(data.error);
+                }
 
-            // Update button if empty
-            if (currentBalance === 0) {
-                const btn = document.querySelector('.claim-btn');
-                btn.innerText = 'Fully Claimed! ❤️';
-                btn.style.background = 'linear-gradient(45deg, #2ed573, #7bed9f)';
-                btn.style.boxShadow = '0 12px 25px rgba(46, 213, 115, 0.4)';
-                btn.style.color = '#fff';
-                btn.disabled = true;
+                // Valid amount & successful sync
+                closeModal();
+                confirmBtn.innerText = 'Claim';
+                confirmBtn.disabled = false;
+
+                // Fireworks for claiming
+                confetti({
+                    particleCount: 150,
+                    spread: 100,
+                    origin: { y: 0.6 },
+                    colors: ['#ff4757', '#ffffff', '#ff6b81', '#ff9a9e']
+                });
+
+                // Animate decrement
+                const oldBalance = currentBalance;
+                currentBalance = data.newBalance !== undefined ? data.newBalance : (currentBalance - amountToClaim);
+                
+                animateValue("counter", oldBalance, currentBalance, 1500, false);
+
+                // Update button if empty
+                if (currentBalance === 0) {
+                    const btn = document.querySelector('.claim-btn');
+                    btn.innerText = 'Fully Claimed! ❤️';
+                    btn.style.background = 'linear-gradient(45deg, #2ed573, #7bed9f)';
+                    btn.style.boxShadow = '0 12px 25px rgba(46, 213, 115, 0.4)';
+                    btn.style.color = '#fff';
+                    btn.disabled = true;
+                }
+
+            } catch (err) {
+                console.error(err);
+                errorMsg.innerText = 'Error processing claim. Try again.';
+                errorMsg.style.opacity = '1';
+                confirmBtn.innerText = 'Claim';
+                confirmBtn.disabled = false;
             }
         }
     </script>
