@@ -228,6 +228,132 @@
             line-height: 1.5;
             font-weight: 600;
         }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+            z-index: 100;
+        }
+
+        .modal-overlay.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px 25px;
+            border-radius: 25px;
+            text-align: center;
+            width: 80%;
+            max-width: 320px;
+            transform: scale(0.8);
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            color: #2d3436;
+        }
+
+        .modal-overlay.show .modal-card {
+            transform: scale(1);
+        }
+
+        .modal-card h2 {
+            margin: 0 0 10px 0;
+            font-size: 1.8rem;
+            color: #ff4757;
+            font-weight: 900;
+        }
+
+        .modal-card p {
+            margin: 0 0 20px 0;
+            color: #636e72;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .input-group {
+            display: flex;
+            align-items: center;
+            background: #f1f2f6;
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 5px;
+            border: 2px solid transparent;
+            transition: border-color 0.3s;
+        }
+
+        .input-group:focus-within {
+            border-color: #ff4757;
+        }
+
+        .input-currency {
+            font-size: 1.5rem;
+            color: #ff6b81;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .modal-card input {
+            border: none;
+            background: transparent;
+            font-size: 2rem;
+            color: #2d3436;
+            font-weight: 800;
+            width: 100%;
+            outline: none;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .error-msg {
+            color: #ff4757 !important;
+            font-size: 0.85rem !important;
+            margin: 5px 0 15px 0 !important;
+            height: 15px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .modal-actions button {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .modal-actions button:active {
+            transform: scale(0.95);
+        }
+
+        .cancel-btn {
+            background: #dfe4ea;
+            color: #57606f;
+        }
+
+        .confirm-btn {
+            background: linear-gradient(45deg, #ff4757, #ff6b81);
+            color: white;
+            box-shadow: 0 5px 15px rgba(255, 71, 87, 0.3);
+        }
     </style>
 </head>
 <body>
@@ -245,7 +371,7 @@
     <!-- Main Screen: Voucher -->
     <div id="voucher-screen">
         <div class="voucher-card" id="voucher-card">
-            <h1>Surprise! 🎉</h1>
+            <h1>For you, Dilini ❤️</h1>
             <p class="subtitle">Your Beauty & Self-Care Treat</p>
             
             <div class="balance-container">
@@ -256,14 +382,30 @@
                 </div>
             </div>
             
-            <button class="claim-btn" onclick="claimGift()">Claim Now</button>
+            <button class="claim-btn" onclick="claimGift()">Claim Amount</button>
             <p class="footer-note">Treat yourself to whatever makes you feel beautiful.</p>
         </div>
     </div>
 
+    <!-- Modal for claiming amount -->
+    <div id="claim-modal" class="modal-overlay">
+        <div class="modal-card">
+            <h2>Treat Yourself 💅</h2>
+            <p>How much would you like to claim?</p>
+            <div class="input-group">
+                <span class="input-currency">Rs.</span>
+                <input type="number" id="claim-amount" placeholder="0" min="1">
+            </div>
+            <p id="modal-error" class="error-msg">Please enter a valid amount</p>
+            <div class="modal-actions">
+                <button class="cancel-btn" onclick="closeModal()">Cancel</button>
+                <button class="confirm-btn" onclick="confirmClaim()">Claim</button>
+            </div>
+        </div>
+    </div>
     <script>
         // CHANGE THIS TO YOUR DESIRED VOUCHER AMOUNT
-        const targetAmount = 15000; 
+        let currentBalance = 15000; 
         let isOpened = false;
         
         function openGift() {
@@ -291,11 +433,11 @@
             setTimeout(() => {
                 document.getElementById('voucher-card').classList.add('show');
                 // Start counter
-                animateValue("counter", 0, targetAmount, 2500);
+                animateValue("counter", 0, currentBalance, 2500, true);
             }, 600);
         }
 
-        function animateValue(id, start, end, duration) {
+        function animateValue(id, start, end, duration, isInitial = false) {
             const obj = document.getElementById(id);
             let startTimestamp = null;
             const step = (timestamp) => {
@@ -312,22 +454,24 @@
                     window.requestAnimationFrame(step);
                 } else {
                     obj.innerHTML = end.toLocaleString();
-                    // Final mini confetti on amount reach
-                    confetti({
-                        particleCount: 80,
-                        spread: 70,
-                        origin: { y: 0.6 },
-                        colors: ['#ff4757', '#ff6b81', '#ffffff']
-                    });
-                    
-                    // Trigger button shine
-                    setTimeout(() => {
-                        const btn = document.querySelector('.claim-btn');
-                        btn.style.setProperty('--pseudo-left', '100%');
-                        const style = document.createElement('style');
-                        style.innerHTML = `.claim-btn::after { left: 100%; }`;
-                        document.head.appendChild(style);
-                    }, 500);
+                    if (isInitial) {
+                        // Final mini confetti on initial amount reach
+                        confetti({
+                            particleCount: 80,
+                            spread: 70,
+                            origin: { y: 0.6 },
+                            colors: ['#ff4757', '#ff6b81', '#ffffff']
+                        });
+                        
+                        // Trigger button shine
+                        setTimeout(() => {
+                            const btn = document.querySelector('.claim-btn');
+                            btn.style.setProperty('--pseudo-left', '100%');
+                            const style = document.createElement('style');
+                            style.innerHTML = `.claim-btn::after { left: 100%; }`;
+                            document.head.appendChild(style);
+                        }, 500);
+                    }
                 }
             };
             window.requestAnimationFrame(step);
@@ -350,25 +494,65 @@
                 }
 
                 var particleCount = 50 * (timeLeft / duration);
-                // since particles fall down, start a bit higher than random
                 confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
                 confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
             }, 250);
         }
         
         function claimGift() {
+            if (currentBalance <= 0) return;
+            document.getElementById('claim-amount').value = '';
+            document.getElementById('modal-error').style.opacity = '0';
+            document.getElementById('claim-modal').classList.add('show');
+        }
+
+        function closeModal() {
+            document.getElementById('claim-modal').classList.remove('show');
+        }
+
+        function confirmClaim() {
+            const input = document.getElementById('claim-amount').value;
+            const amountToClaim = parseInt(input);
+            const errorMsg = document.getElementById('modal-error');
+
+            if (isNaN(amountToClaim) || amountToClaim <= 0) {
+                errorMsg.innerText = 'Please enter a valid amount';
+                errorMsg.style.opacity = '1';
+                return;
+            }
+
+            if (amountToClaim > currentBalance) {
+                errorMsg.innerText = 'Amount exceeds your balance!';
+                errorMsg.style.opacity = '1';
+                return;
+            }
+
+            // Valid amount
+            closeModal();
+
+            // Fireworks for claiming
             confetti({
-                particleCount: 200,
-                spread: 120,
+                particleCount: 150,
+                spread: 100,
                 origin: { y: 0.6 },
                 colors: ['#ff4757', '#ffffff', '#ff6b81', '#ff9a9e']
             });
-            const btn = document.querySelector('.claim-btn');
-            btn.innerText = 'Claimed! Enjoy ❤️';
-            btn.style.background = 'linear-gradient(45deg, #2ed573, #7bed9f)';
-            btn.style.boxShadow = '0 12px 25px rgba(46, 213, 115, 0.4)';
-            btn.style.color = '#fff';
-            btn.disabled = true;
+
+            // Animate decrement
+            const oldBalance = currentBalance;
+            currentBalance -= amountToClaim;
+            
+            animateValue("counter", oldBalance, currentBalance, 1500, false);
+
+            // Update button if empty
+            if (currentBalance === 0) {
+                const btn = document.querySelector('.claim-btn');
+                btn.innerText = 'Fully Claimed! ❤️';
+                btn.style.background = 'linear-gradient(45deg, #2ed573, #7bed9f)';
+                btn.style.boxShadow = '0 12px 25px rgba(46, 213, 115, 0.4)';
+                btn.style.color = '#fff';
+                btn.disabled = true;
+            }
         }
     </script>
 </body>
