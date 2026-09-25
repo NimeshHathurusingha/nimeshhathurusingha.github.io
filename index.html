@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -49,7 +50,8 @@
             z-index: -2;
         }
 
-        #gift-screen, #voucher-screen {
+        #gift-screen,
+        #voucher-screen {
             position: absolute;
             width: 100%;
             height: 100%;
@@ -70,19 +72,32 @@
             font-size: 120px;
             cursor: pointer;
             animation: bounce 2s infinite;
-            filter: drop-shadow(0 0 20px rgba(255,215,0,0.5));
+            filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.5));
             transition: transform 0.3s ease;
             user-select: none;
         }
-        
+
         .gift-box:active {
             transform: scale(0.85);
         }
 
         @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-            40% { transform: translateY(-30px); }
-            60% { transform: translateY(-15px); }
+
+            0%,
+            20%,
+            50%,
+            80%,
+            100% {
+                transform: translateY(0);
+            }
+
+            40% {
+                transform: translateY(-30px);
+            }
+
+            60% {
+                transform: translateY(-15px);
+            }
         }
 
         .tap-text {
@@ -96,9 +111,17 @@
         }
 
         @keyframes pulse {
-            0% { opacity: 0.4; }
-            50% { opacity: 1; }
-            100% { opacity: 0.4; }
+            0% {
+                opacity: 0.4;
+            }
+
+            50% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0.4;
+            }
         }
 
         .greeting-text {
@@ -107,15 +130,22 @@
             margin-bottom: 40px;
             text-align: center;
             font-weight: 800;
-            text-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            text-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
             animation: fadeInDown 1s ease;
             padding: 0 20px;
             line-height: 1.2;
         }
 
         @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         /* Voucher Card */
@@ -158,7 +188,7 @@
             border-radius: 20px;
             padding: 25px 20px;
             margin-bottom: 35px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.05), inset 0 0 0 1px rgba(255,154,158, 0.3);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05), inset 0 0 0 1px rgba(255, 154, 158, 0.3);
             position: relative;
             overflow: hidden;
         }
@@ -179,7 +209,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            text-shadow: 2px 2px 0px rgba(255,71,87,0.1);
+            text-shadow: 2px 2px 0px rgba(255, 71, 87, 0.1);
         }
 
         .currency {
@@ -211,8 +241,11 @@
         .claim-btn::after {
             content: '';
             position: absolute;
-            top: 0; left: -100%; width: 50%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
             transition: 0.5s;
         }
 
@@ -232,7 +265,10 @@
         /* Modal Styles */
         .modal-overlay {
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background: rgba(0, 0, 0, 0.5);
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
@@ -259,7 +295,7 @@
             max-width: 320px;
             transform: scale(0.8);
             transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
             color: #2d3436;
         }
 
@@ -356,6 +392,7 @@
         }
     </style>
 </head>
+
 <body>
 
     <div id="bg-gradient-bright"></div>
@@ -373,7 +410,7 @@
         <div class="voucher-card" id="voucher-card">
             <h1>For you, Dilini ❤️</h1>
             <p class="subtitle">Your Beauty & Self-Care Treat</p>
-            
+
             <div class="balance-container">
                 <div class="balance-label">Voucher Value</div>
                 <div class="balance-amount">
@@ -381,7 +418,7 @@
                     <span id="counter">0</span>
                 </div>
             </div>
-            
+
             <button class="claim-btn" onclick="claimGift()">Claim Amount</button>
             <p class="footer-note">Treat yourself to whatever makes you feel beautiful.</p>
         </div>
@@ -405,7 +442,7 @@
     </div>
     <script>
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxyYnGp1djWRzSL4VV7SXH-Rom2CCa9xs2N_NuMogokI76mfMVD-36lxo7gpKUuR2eZAA/exec';
-        let currentBalance = 15000; 
+        let currentBalance = 50000;
         let isOpened = false;
         let isReady = false;
 
@@ -426,7 +463,7 @@
                     document.getElementById('tap-text').innerText = "Tap to Open";
                 });
         };
-        
+
         function openGift() {
             if (isOpened || !isReady) return;
             isOpened = true;
@@ -435,7 +472,7 @@
             const giftScreen = document.getElementById('gift-screen');
             giftScreen.style.opacity = '0';
             document.getElementById('bg-gradient').classList.add('active');
-            
+
             setTimeout(() => {
                 giftScreen.style.display = 'none';
             }, 1000);
@@ -465,10 +502,10 @@
                 // Ease out cubic
                 const easeProgress = 1 - Math.pow(1 - progress, 3);
                 const currentVal = Math.floor(easeProgress * (end - start) + start);
-                
+
                 // Format with commas
                 obj.innerHTML = currentVal.toLocaleString();
-                
+
                 if (progress < 1) {
                     window.requestAnimationFrame(step);
                 } else {
@@ -481,7 +518,7 @@
                             origin: { y: 0.6 },
                             colors: ['#ff4757', '#ff6b81', '#ffffff']
                         });
-                        
+
                         // Trigger button shine
                         setTimeout(() => {
                             const btn = document.querySelector('.claim-btn');
@@ -505,7 +542,7 @@
                 return Math.random() * (max - min) + min;
             }
 
-            var interval = setInterval(function() {
+            var interval = setInterval(function () {
                 var timeLeft = animationEnd - Date.now();
 
                 if (timeLeft <= 0) {
@@ -517,7 +554,7 @@
                 confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
             }, 250);
         }
-        
+
         function claimGift() {
             if (currentBalance <= 0) return;
             document.getElementById('claim-amount').value = '';
@@ -560,7 +597,7 @@
                 });
 
                 const data = await response.json();
-                
+
                 if (data.error) {
                     throw new Error(data.error);
                 }
@@ -581,7 +618,7 @@
                 // Animate decrement
                 const oldBalance = currentBalance;
                 currentBalance = data.newBalance !== undefined ? data.newBalance : (currentBalance - amountToClaim);
-                
+
                 animateValue("counter", oldBalance, currentBalance, 1500, false);
 
                 // Update button if empty
@@ -604,4 +641,5 @@
         }
     </script>
 </body>
+
 </html>
